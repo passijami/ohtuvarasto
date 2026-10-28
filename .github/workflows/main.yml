@@ -18,3 +18,11 @@ jobs:
         run: uv sync
       - name: Run tests
         run: uv run coverage run --branch -m pytest
+      - name: Coverage report
+        run: uv run coverage xml
+      - name: Coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./varasto/coverage.xml
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
