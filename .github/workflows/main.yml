@@ -26,3 +26,5 @@ jobs:
           files: ./varasto/coverage.xml
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run Pylint
+	run: uv run pylint src
