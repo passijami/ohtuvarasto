@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ohtuvarasto</title>
+  <style>
+    body { font-family: sans-serif; max-width: 50rem; margin: 2rem auto; }
+    section { margin-bottom: 2rem; padding: 1rem; border: 1px solid #ccc; }
+    label { display: block; margin: 0.5rem 0; }
+    input, select { margin-left: 0.5rem; }
+    .virhe { color: #b00020; }
+    .onnistus { color: #0a7a27; }
+  </style>
+</head>
+<body>
+  <h1>Ohtuvarasto</h1>
+
+  {% with viestit = get_flashed_messages(with_categories=true) %}
+    {% for tyyppi, viesti in viestit %}
+      <p class="{{ tyyppi }}">{{ viesti }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <section>
+    <h2>Uusi varasto</h2>
+    <form action="{{ url_for('luo_varasto_route') }}" method="post">
+      <label>Nimi <input name="nimi" required></label>
+      <label>Tilavuus <input name="tilavuus" type="number" step="any" min="0.01" required></label>
+      <button type="submit">Luo varasto</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Varastot</h2>
+    {% if varastot %}
+      <ul>
+      {% for nimi, varasto in varastot.items() %}
+        <li>
+          <strong>{{ nimi }}</strong>:
+          tilavuus {{ '%g'|format(varasto.tilavuus) }},
+          saldo {{ '%g'|format(varasto.saldo) }},
+          vapaata tilaa {{ '%g'|format(varasto.paljonko_mahtuu()) }}
+        </li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p>Ei varastoja.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Lisää tavaraa</h2>
+    <form action="{{ url_for('lisaa_varastoon_route') }}" method="post">
+      <label>Varasto
+        <select name="varasto">
+          {% for nimi in varastot %}
+            <option value="{{ nimi }}">{{ nimi }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Määrä <input name="maara" type="number" step="any" min="0.01" required></label>
+      <button type="submit">Lisää</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Ota tavaraa</h2>
+    <form action="{{ url_for('ota_varastosta_route') }}" method="post">
+      <label>Varasto
+        <select name="varasto">
+          {% for nimi in varastot %}
+            <option value="{{ nimi }}">{{ nimi }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Määrä <input name="maara" type="number" step="any" min="0.01" required></label>
+      <button type="submit">Ota</button>
+    </form>
+  </section>
+</body>
+</html>
